@@ -1,65 +1,272 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState } from 'react';
+import { Navigation, MessageCircle, Search, MapPin, Clock, DollarSign, Plus } from 'lucide-react';
+import InteractiveGlobe from '@/components/map/InteractiveGlobe';
+import Link from 'next/link';
+import { PLACES_WITH_POS, Place } from '@/lib/places';
+
+import { motion, AnimatePresence } from 'framer-motion';
+
+function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  // Filter search results
+  const searchResults = searchQuery.trim() === '' 
+    ? [] 
+    : PLACES_WITH_POS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const handleSelectSearchResult = (id: string) => {
+    onSelectPlace(id);
+    setSearchQuery('');
+    setIsSearchFocused(false);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <nav className="absolute top-0 w-full z-20 px-6 py-4 pointer-events-none">
+      <div className="mx-auto flex max-w-5xl items-center justify-between rounded-full bg-white/60 px-6 py-3 shadow-[0_4px_30px_rgba(0,0,0,0.05)] backdrop-blur-md border border-white/60 pointer-events-auto">
+        <div className="flex items-center gap-6">
+          <h1 className="text-2xl font-bold tracking-tight text-[#c2410c] drop-shadow-sm font-sans">
+            Sucreando
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+          
+          {/* Search Bar */}
+          <div className="relative hidden md:block w-64">
+            <div className="relative flex items-center">
+              <Search className="absolute left-3 h-4 w-4 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Buscar lugar..." 
+                className="w-full bg-white/50 border border-white/80 focus:bg-white focus:border-[#c2410c]/30 rounded-full py-1.5 pl-9 pr-4 text-sm text-gray-700 outline-none transition-all placeholder:text-gray-400"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+              />
+            </div>
+            
+            {/* Search Results Dropdown */}
+            <AnimatePresence>
+              {isSearchFocused && searchResults.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full mt-2 w-full rounded-2xl bg-white/90 backdrop-blur-md shadow-lg border border-white p-2 flex flex-col gap-1"
+                >
+                  {searchResults.map(place => (
+                    <button 
+                      key={place.id}
+                      onClick={() => handleSelectSearchResult(place.id)}
+                      className="text-left px-3 py-2 rounded-xl hover:bg-[#c2410c]/10 text-sm text-gray-700 transition-colors"
+                    >
+                      {place.name}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="hidden sm:flex items-center gap-6 text-gray-700 font-medium">
+          <Link href="#" className="hover:text-[#c2410c] transition-colors">Inicio</Link>
+          <Link href="#" className="hover:text-[#c2410c] transition-colors">Rutas</Link>
+          <Link href="#" className="hover:text-[#c2410c] transition-colors">Acerca de</Link>
         </div>
-      </main>
+      </div>
+    </nav>
+  );
+}
+
+export default function HomePage() {
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const [selectedRoutePlaces, setSelectedRoutePlaces] = useState<string[]>([]); // "Shopping Cart" state
+
+  const selectedPlace = PLACES_WITH_POS.find(p => p.id === selectedPlaceId);
+  const isAdded = selectedPlace ? selectedRoutePlaces.includes(selectedPlace.id) : false;
+
+  const handleToggleRoute = () => {
+    if (!selectedPlace) return;
+    if (isAdded) {
+      setSelectedRoutePlaces(prev => prev.filter(id => id !== selectedPlace.id));
+    } else {
+      setSelectedRoutePlaces(prev => [...prev, selectedPlace.id]);
+    }
+  };
+
+  return (
+    <div className="relative h-dvh w-full overflow-hidden bg-gradient-to-b from-[#e0f2fe] via-[#f0f9ff] to-[#fafaf9]">
+      
+      {/* Navbar Minimalista, Flotante y con Buscador Desacoplado */}
+      <Navbar onSelectPlace={setSelectedPlaceId} />
+
+      {/* 3D Interactive Globe Background */}
+      <div className="absolute inset-0 z-0">
+        <InteractiveGlobe 
+          selectedPlaceId={selectedPlaceId} 
+          onSelectPlace={setSelectedPlaceId} 
+        />
+      </div>
+
+      {/* Foreground UI Layer */}
+      <div className="pointer-events-none absolute inset-0 z-10 p-6 pb-8">
+        
+        {/* Bottom Area Container */}
+        <div className="flex flex-col md:flex-row items-end justify-between gap-6 mx-auto w-full h-full max-w-6xl relative">
+          
+          {/* Left Panel: Place Details (Draggable) */}
+          <AnimatePresence>
+            {selectedPlace && (
+              <motion.div 
+                key="draggable-card"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                drag
+                dragMomentum={false}
+                dragElastic={0.1}
+                className="pointer-events-auto absolute bottom-0 left-0 w-full md:w-96 cursor-grab active:cursor-grabbing"
+              >
+                <div className="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2rem] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex flex-col resize overflow-auto min-h-[400px] min-w-[320px] max-w-[90vw] max-h-[85vh]">
+                  {/* Drag handle hint */}
+                  <div className="w-12 h-1.5 bg-gray-300/80 rounded-full mx-auto mb-4 opacity-70"></div>
+                  
+                  {/* Content that updates when selectedPlace changes */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={selectedPlace.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex flex-col"
+                    >
+                      {/* Header Image */}
+                      <div className="w-full h-40 rounded-2xl mb-4 relative overflow-hidden flex items-center justify-center bg-gray-100">
+                        {selectedPlace.image ? (
+                          <img 
+                            src={selectedPlace.image} 
+                            alt={selectedPlace.name} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-5xl drop-shadow-md">{selectedPlace.emoji}</span>
+                        )}
+                        {/* Close Button overlay */}
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSelectedPlaceId(null); }} 
+                          className="absolute top-2 right-2 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center transition-colors shrink-0 cursor-pointer pointer-events-auto"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {/* Header Title & Category */}
+                      <div className="mb-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#c2410c] bg-[#ffedd5] px-2 py-0.5 rounded-full">
+                            {selectedPlace.type}
+                          </span>
+                          <span className="text-xs font-bold text-amber-500 flex items-center">
+                            ⭐ {selectedPlace.rating}
+                          </span>
+                        </div>
+                        <h2 className="text-2xl font-black text-gray-900 leading-tight tracking-tight pr-2">{selectedPlace.name}</h2>
+                      </div>
+                      
+                      <p className="text-sm text-gray-600 mb-5 cursor-text leading-relaxed">{selectedPlace.info}</p>
+                      
+                      {/* Fast Data Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                          <Clock className="w-4 h-4 text-[#4d7c0f]" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase">Tiempo</span>
+                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.time}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                          <DollarSign className="w-4 h-4 text-[#4d7c0f]" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase">Costo</span>
+                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.cost}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                          <MapPin className="w-4 h-4 text-[#4d7c0f]" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase">Dificultad</span>
+                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.difficulty}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                          <MessageCircle className="w-4 h-4 text-[#4d7c0f]" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase">Horario</span>
+                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.schedule}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Main Action Button */}
+                      <button 
+                        onClick={handleToggleRoute}
+                        className={`group relative w-full flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black transition-all cursor-pointer border ${
+                          isAdded 
+                            ? 'bg-emerald-500 text-white shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:bg-emerald-600 border-white/20'
+                            : 'bg-gradient-to-r from-[#c2410c] to-[#ea580c] hover:from-[#9a3412] hover:to-[#c2410c] text-white shadow-[0_8px_20px_rgba(234,88,12,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(234,88,12,0.4)] border-white/20'
+                        }`}
+                      >
+                        {isAdded ? (
+                          <>✔️ Añadido a tu ruta</>
+                        ) : (
+                          <>
+                            <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            Agregar a la ruta
+                          </>
+                        )}
+                      </button>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Bottom Action Buttons (Centered/Right aligned in large screens) */}
+          <div className="pointer-events-auto absolute bottom-0 right-0 flex w-full md:w-auto flex-col sm:flex-row justify-center md:justify-end gap-4 shrink-0">
+            <button className="group relative flex items-center justify-center gap-2 overflow-visible rounded-3xl bg-[#c2410c] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(194,65,12,0.3),_inset_0_4px_0_rgba(255,255,255,0.2)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(194,65,12,0.4),_inset_0_4px_0_rgba(255,255,255,0.3)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(194,65,12,0.3),_inset_0_0px_0_rgba(255,255,255,0)]">
+              <MapPin className="h-5 w-5" />
+              <span className="text-base whitespace-nowrap">Generar ruta</span>
+              
+              {/* Notification Badge */}
+              <AnimatePresence>
+                {selectedRoutePlaces.length > 0 && (
+                  <motion.div 
+                    key={selectedRoutePlaces.length} // Force re-animate on count change
+                    initial={{ scale: 0 }} 
+                    animate={{ scale: 1 }} 
+                    exit={{ scale: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black rounded-full w-7 h-7 flex items-center justify-center shadow-lg border-2 border-white"
+                  >
+                    {selectedRoutePlaces.length}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+
+            <button className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-3xl bg-[#f97316] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(249,115,22,0.3),_inset_0_4px_0_rgba(255,255,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(249,115,22,0.4),_inset_0_4px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(249,115,22,0.3),_inset_0_0px_0_rgba(255,255,255,0)]">
+              <MessageCircle className="h-5 w-5" />
+              <span className="text-base whitespace-nowrap">Hablar con la guía IA</span>
+            </button>
+          </div>
+          
+        </div>
+      </div>
     </div>
   );
 }
