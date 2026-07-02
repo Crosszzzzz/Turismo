@@ -7,6 +7,8 @@ export interface Place {
   category: string;
   lat: number;
   lon: number; // mapped from lng
+  realLat?: number;
+  realLng?: number;
   info: string;
   time: string;
   cost: string;
@@ -33,22 +35,22 @@ export function latLongToVector3(lat: number, lon: number, radius: number): THRE
 }
 
 const rawPlaces = [
-  { id: 1, name: "Catedral Metropolitana", lat: -19.0486, lng: -65.2603, type: "church", image: "https://picsum.photos/seed/sucre1/400/200" },
-  { id: 2, name: "Casa de la Libertad", lat: -19.0481, lng: -65.2600, type: "museum", image: "https://picsum.photos/seed/sucre2/400/200" },
-  { id: 3, name: "Mercado Central", lat: -19.0456, lng: -65.2586, type: "market", image: "https://picsum.photos/seed/sucre3/400/200" },
-  { id: 4, name: "Castillo de la Glorieta", lat: -19.0847, lng: -65.2686, type: "castle", image: "https://picsum.photos/seed/sucre4/400/200" },
-  { id: 5, name: "Iglesia de San Francisco", lat: -19.0481, lng: -65.2631, type: "church", image: "https://picsum.photos/seed/sucre5/400/200" },
-  { id: 6, name: "Universidad USFX", lat: -19.0461, lng: -65.2614, type: "museum", image: "https://picsum.photos/seed/sucre6/400/200" },
-  { id: 7, name: "Parque Bolívar", lat: -19.0436, lng: -65.2644, type: "park", image: "https://picsum.photos/seed/sucre7/400/200" },
-  { id: 8, name: "Museo ASUR", lat: -19.0542, lng: -65.2539, type: "museum", image: "https://picsum.photos/seed/sucre8/400/200" },
-  { id: 9, name: "Oratorio de San Felipe Neri", lat: -19.0478, lng: -65.2606, type: "church", image: "https://picsum.photos/seed/sucre9/400/200" },
-  { id: 10, name: "Museo del Tesoro", lat: -19.0497, lng: -65.2631, type: "museum", image: "https://picsum.photos/seed/sucre10/400/200" },
-  { id: 11, name: "Templo de San Lázaro", lat: -19.0519, lng: -65.2617, type: "church", image: "https://picsum.photos/seed/sucre11/400/200" },
-  { id: 12, name: "Teatro Gran Mariscal", lat: -19.0450, lng: -65.2633, type: "museum", image: "https://picsum.photos/seed/sucre12/400/200" },
-  { id: 13, name: "Convento de Santa Clara", lat: -19.0456, lng: -65.2625, type: "museum", image: "https://picsum.photos/seed/sucre13/400/200" },
-  { id: 14, name: "Cementerio General", lat: -19.0481, lng: -65.2625, type: "park", image: "https://picsum.photos/seed/sucre14/400/200" },
-  { id: 15, name: "Parque Cretácico", lat: -19.0067, lng: -65.2361, type: "dino", image: "https://picsum.photos/seed/sucre15/400/200" },
-  { id: 16, name: "Plaza de la Recoleta", lat: -19.0547, lng: -65.2533, type: "park", image: "https://picsum.photos/seed/sucre16/400/200" }
+  { id: 1, name: "Catedral Metropolitana", lat: -19.0486, lng: -65.2603, type: "church", image: "/images/places/1-catedral.jpg" },
+  { id: 2, name: "Casa de la Libertad", lat: -19.0481, lng: -65.2600, type: "museum", image: "/images/places/2-casa-libertad.jpg" },
+  { id: 3, name: "Mercado Central", lat: -19.0456, lng: -65.2586, type: "market", image: "/images/places/3-mercado-central.jpg" },
+  { id: 4, name: "Castillo de la Glorieta", lat: -19.0847, lng: -65.2686, type: "castle", image: "/images/places/4-castillo-glorieta.jpg" },
+  { id: 5, name: "Iglesia de San Francisco", lat: -19.0481, lng: -65.2631, type: "church", image: "/images/places/5-san-francisco.jpg" },
+  { id: 6, name: "Universidad USFX", lat: -19.0461, lng: -65.2614, type: "museum", image: "/images/places/6-universidad.jpg" },
+  { id: 7, name: "Parque Bolívar", lat: -19.0436, lng: -65.2644, type: "park", image: "/images/places/7-parque-bolivar.jpg" },
+  { id: 8, name: "Museo ASUR", lat: -19.0542, lng: -65.2539, type: "museum", image: "/images/places/8-museo-asur.jpg" },
+  { id: 9, name: "Oratorio de San Felipe Neri", lat: -19.0478, lng: -65.2606, type: "church", image: "/images/places/9-san-felipe-neri.jpg" },
+  { id: 10, name: "Museo del Tesoro", lat: -19.0497, lng: -65.2631, type: "museum", image: "/images/places/10-museo-tesoro.jpg" },
+  { id: 11, name: "Templo de San Lázaro", lat: -19.0519, lng: -65.2617, type: "church", image: "/images/places/11-san-lazaro.jpg" },
+  { id: 12, name: "Teatro Gran Mariscal", lat: -19.0450, lng: -65.2633, type: "museum", image: "/images/places/12-teatro-mariscal.jpg" },
+  { id: 13, name: "Convento de Santa Clara", lat: -19.0456, lng: -65.2625, type: "museum", image: "/images/places/13-santa-clara.jpg" },
+  { id: 14, name: "Cementerio General", lat: -19.0481, lng: -65.2625, type: "park", image: "/images/places/14-cementerio.jpg" },
+  { id: 15, name: "Parque Cretácico", lat: -19.0067, lng: -65.2361, type: "dino", image: "/images/places/15-parque-cretacico.jpg" },
+  { id: 16, name: "Plaza de la Recoleta", lat: -19.0547, lng: -65.2533, type: "park", image: "/images/places/16-recoleta.jpg" }
 ];
 
 const minLat = Math.min(...rawPlaces.map(p => p.lat));
@@ -129,6 +131,8 @@ export const SUCRE_PLACES: Place[] = mappedPlaces.map(p => {
     category: catMap[p.type] || "Lugar",
     lat: p.mappedLat,
     lon: p.mappedLng,
+    realLat: p.lat,
+    realLng: p.lng,
     info: `Un imperdible en Sucre: ${p.name}. Explora su historia y encanto.`,
     time: '1 - 2 hrs',
     cost: 'Variable',

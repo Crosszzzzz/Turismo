@@ -4,7 +4,7 @@ import type { ChatMessage, PlaceContext } from '@/types/route';
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
-const MODEL_NAME = 'gemini-2.0-flash';
+const MODEL_NAME = 'gemini-2.5-flash';
 
 export async function chatWithAI(
   messages: ChatMessage[],

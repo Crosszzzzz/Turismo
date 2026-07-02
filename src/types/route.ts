@@ -21,6 +21,19 @@ export interface GeneratedRoute {
   stops: RouteStop[];
 }
 
+export interface RouteStep {
+  place: string;
+  time: string;
+  description: string;
+  tip: string;
+}
+
+export interface StructuredRoute {
+  introduction: string;
+  steps: RouteStep[];
+  mapsUrl: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;

@@ -150,8 +150,8 @@ export function PlaceMarker({ place, isSelected = false, onHover, onClick }: Pla
               <meshStandardMaterial color={wallColor} {...commonMaterialProps} />
             </mesh>
             {/* Classic Roof */}
-            <mesh position={[0, 0.04, 0]} rotation={[0, 0, 0]}>
-              <cylinderGeometry args={[0.04, 0.04, 0.08, 3]} rotation={[Math.PI/2, 0, Math.PI/2]} />
+            <mesh position={[0, 0.04, 0]} rotation={[Math.PI/2, 0, Math.PI/2]}>
+              <cylinderGeometry args={[0.04, 0.04, 0.08, 3]} />
               <meshStandardMaterial color={roofColor} {...commonMaterialProps} />
             </mesh>
           </group>
@@ -235,8 +235,8 @@ export function PlaceMarker({ place, isSelected = false, onHover, onClick }: Pla
               <meshStandardMaterial color={wallColor} {...commonMaterialProps} />
             </mesh>
             {/* Tent top */}
-            <mesh position={[0, 0.025, 0]}>
-              <cylinderGeometry args={[0.03, 0.03, 0.06, 3]} rotation={[Math.PI/2, 0, Math.PI/2]} />
+            <mesh position={[0, 0.025, 0]} rotation={[Math.PI/2, 0, Math.PI/2]}>
+              <cylinderGeometry args={[0.03, 0.03, 0.06, 3]} />
               <meshStandardMaterial color={roofColor} {...commonMaterialProps} />
             </mesh>
           </group>
