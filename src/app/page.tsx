@@ -202,6 +202,10 @@ export default function HomePage() {
       setSelectedRoutePlaces(prev => prev.filter(id => id !== selectedPlace.id));
     } else {
       setSelectedRoutePlaces(prev => [...prev, selectedPlace.id]);
+      // Auto-close card on mobile only to free screen space
+      if (window.innerWidth < 768) {
+        setSelectedPlaceId(null);
+      }
     }
   };
 
