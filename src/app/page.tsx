@@ -29,7 +29,7 @@ function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
       <div className="mx-auto flex max-w-5xl items-center justify-between rounded-full bg-white/60 px-6 py-3 shadow-[0_4px_30px_rgba(0,0,0,0.05)] backdrop-blur-md border border-white/60 pointer-events-auto">
         <div className="flex items-center gap-6">
           <h1 className="text-2xl font-bold tracking-tight text-[#c2410c] drop-shadow-sm font-sans">
-            Sucreando
+            SmartTour
           </h1>
 
           {/* Search Bar */}
@@ -73,8 +73,8 @@ function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
 
         <div className="hidden sm:flex items-center gap-6 text-gray-700 font-medium">
           <Link href="#" className="hover:text-[#c2410c] transition-colors">Inicio</Link>
-          <Link href="#" className="hover:text-[#c2410c] transition-colors">Rutas</Link>
-          <Link href="#" className="hover:text-[#c2410c] transition-colors">Acerca de</Link>
+          <Link href="/rutas" className="hover:text-[#c2410c] transition-colors">Rutas</Link>
+          <Link href="/acerca-de" className="hover:text-[#c2410c] transition-colors">Acerca de</Link>
         </div>
       </div>
     </nav>
@@ -82,10 +82,12 @@ function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
 }
 
 import RouteModal from '@/components/map/RouteModal';
+import ChatInterface from '@/components/chat/ChatInterface';
 
 export default function HomePage() {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [selectedRoutePlaces, setSelectedRoutePlaces] = useState<string[]>([]); // "Shopping Cart" state
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Route generation state
   const [isGeneratingRoute, setIsGeneratingRoute] = useState(false);
@@ -361,7 +363,10 @@ export default function HomePage() {
               </AnimatePresence>
             </button>
 
-            <button className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-3xl bg-[#f97316] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(249,115,22,0.3),_inset_0_4px_0_rgba(255,255,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(249,115,22,0.4),_inset_0_4px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(249,115,22,0.3),_inset_0_0px_0_rgba(255,255,255,0)]">
+            <button
+              onClick={() => setIsChatOpen(true)}
+              className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-3xl bg-[#f97316] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(249,115,22,0.3),_inset_0_4px_0_rgba(255,255,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(249,115,22,0.4),_inset_0_4px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(249,115,22,0.3),_inset_0_0px_0_rgba(255,255,255,0)]"
+            >
               <MessageCircle className="h-5 w-5" />
               <span className="text-base whitespace-nowrap">Hablar con la guía IA</span>
             </button>
@@ -376,6 +381,12 @@ export default function HomePage() {
         onClose={() => setIsRouteModalOpen(false)}
         routeData={generatedRouteData}
         routeInfo={generatedRouteInfo}
+      />
+
+      {/* AI Chat Assistant */}
+      <ChatInterface
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
       />
     </div>
   );

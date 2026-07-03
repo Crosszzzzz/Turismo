@@ -35,22 +35,22 @@ export function latLongToVector3(lat: number, lon: number, radius: number): THRE
 }
 
 const rawPlaces = [
-  { id: 1, name: "Catedral Metropolitana", lat: -19.0486, lng: -65.2603, type: "church", image: "/images/places/1-catedral.jpg" },
-  { id: 2, name: "Casa de la Libertad", lat: -19.0481, lng: -65.2600, type: "museum", image: "/images/places/2-casa-libertad.jpg" },
-  { id: 3, name: "Mercado Central", lat: -19.0456, lng: -65.2586, type: "market", image: "/images/places/3-mercado-central.jpg" },
-  { id: 4, name: "Castillo de la Glorieta", lat: -19.0847, lng: -65.2686, type: "castle", image: "/images/places/4-castillo-glorieta.jpg" },
-  { id: 5, name: "Iglesia de San Francisco", lat: -19.0481, lng: -65.2631, type: "church", image: "/images/places/5-san-francisco.jpg" },
-  { id: 6, name: "Universidad USFX", lat: -19.0461, lng: -65.2614, type: "museum", image: "/images/places/6-universidad.jpg" },
-  { id: 7, name: "Parque Bolívar", lat: -19.0436, lng: -65.2644, type: "park", image: "/images/places/7-parque-bolivar.jpg" },
-  { id: 8, name: "Museo ASUR", lat: -19.0542, lng: -65.2539, type: "museum", image: "/images/places/8-museo-asur.jpg" },
-  { id: 9, name: "Oratorio de San Felipe Neri", lat: -19.0478, lng: -65.2606, type: "church", image: "/images/places/9-san-felipe-neri.jpg" },
-  { id: 10, name: "Museo del Tesoro", lat: -19.0497, lng: -65.2631, type: "museum", image: "/images/places/10-museo-tesoro.jpg" },
-  { id: 11, name: "Templo de San Lázaro", lat: -19.0519, lng: -65.2617, type: "church", image: "/images/places/11-san-lazaro.jpg" },
-  { id: 12, name: "Teatro Gran Mariscal", lat: -19.0450, lng: -65.2633, type: "museum", image: "/images/places/12-teatro-mariscal.jpg" },
-  { id: 13, name: "Convento de Santa Clara", lat: -19.0456, lng: -65.2625, type: "museum", image: "/images/places/13-santa-clara.jpg" },
-  { id: 14, name: "Cementerio General", lat: -19.0481, lng: -65.2625, type: "park", image: "/images/places/14-cementerio.jpg" },
-  { id: 15, name: "Parque Cretácico", lat: -19.0067, lng: -65.2361, type: "dino", image: "/images/places/15-parque-cretacico.jpg" },
-  { id: 16, name: "Plaza de la Recoleta", lat: -19.0547, lng: -65.2533, type: "park", image: "/images/places/16-recoleta.jpg" }
+  { id: 1, name: "Catedral Metropolitana", lat: -19.0486, lng: -65.2603, type: "church", image: "/images/places/catedral.jpeg" },
+  { id: 2, name: "Casa de la Libertad", lat: -19.0481, lng: -65.2600, type: "museum", image: "/images/places/casa%20de%20la%20libertad.jpeg" },
+  { id: 3, name: "Mercado Central", lat: -19.0456, lng: -65.2586, type: "market", image: "/images/places/mercado%20central.jpeg" },
+  { id: 4, name: "Castillo de la Glorieta", lat: -19.0847, lng: -65.2686, type: "castle", image: "/images/places/casa%20de%20la%20glorieta.jpeg" },
+  { id: 5, name: "Iglesia de San Francisco", lat: -19.0481, lng: -65.2631, type: "church", image: "/images/places/iglesia%20san%20francisco.jpeg" },
+  { id: 6, name: "Universidad USFX", lat: -19.0461, lng: -65.2614, type: "museum", image: "/images/places/universidad%20ufx.jpeg" },
+  { id: 7, name: "Parque Bolívar", lat: -19.0436, lng: -65.2644, type: "park", image: "/images/places/parke%20bolivar.jpeg" },
+  { id: 8, name: "Museo ASUR", lat: -19.0542, lng: -65.2539, type: "museum", image: "/images/places/museo%20asur.jpeg" },
+  { id: 9, name: "Oratorio de San Felipe Neri", lat: -19.0478, lng: -65.2606, type: "church", image: "/images/places/san%20felipe%20neri.jpeg" },
+  { id: 10, name: "Museo del Tesoro", lat: -19.0497, lng: -65.2631, type: "museum", image: "/images/places/museo%20del%20tesoro.jpeg" },
+  { id: 11, name: "Templo de San Lázaro", lat: -19.0519, lng: -65.2617, type: "church", image: "/images/places/san%20lazaro.jpeg" },
+  { id: 12, name: "Teatro Gran Mariscal", lat: -19.0450, lng: -65.2633, type: "museum", image: "/images/places/teatro%20mariscal.jpeg" },
+  { id: 13, name: "Convento de Santa Clara", lat: -19.0456, lng: -65.2625, type: "museum", image: "/images/places/santa%20clara.jpeg" },
+  { id: 14, name: "Cementerio General", lat: -19.0481, lng: -65.2625, type: "park", image: "/images/places/cementerio%20general%20de%20sucre.jpeg" },
+  { id: 15, name: "Parque Cretácico", lat: -19.0067, lng: -65.2361, type: "dino", image: "/images/places/parke%20cretacico.jpeg" },
+  { id: 16, name: "Plaza de la Recoleta", lat: -19.0547, lng: -65.2533, type: "park", image: "/images/places/recoleta.jpeg" }
 ];
 
 const minLat = Math.min(...rawPlaces.map(p => p.lat));

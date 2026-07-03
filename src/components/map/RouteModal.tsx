@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, X, Navigation, Clock, Lightbulb, ExternalLink } from 'lucide-react';
 import type { StructuredRoute } from '@/types/route';
+import { SUCRE_PLACES } from '@/lib/places';
 
 interface RouteModalProps {
   isOpen: boolean;
@@ -68,7 +69,10 @@ export default function RouteModal({ isOpen, onClose, routeData, routeInfo }: Ro
 
                     {/* Steps */}
                     <div className="space-y-4">
-                      {routeData.steps.map((step, index) => (
+                      {routeData.steps.map((step, index) => {
+                        const placeImage = SUCRE_PLACES.find(p => p.name.toLowerCase() === step.place.toLowerCase())?.image;
+                        
+                        return (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, x: -20 }}
@@ -87,35 +91,50 @@ export default function RouteModal({ isOpen, onClose, routeData, routeInfo }: Ro
                           </div>
 
                           {/* Step card */}
-                          <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                            {/* Place name */}
-                            <h3 className="font-bold text-orange-700 text-lg mb-2">
-                              {step.place}
-                            </h3>
-
-                            {/* Travel time */}
-                            <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                              <Clock className="w-4 h-4 text-[#ea580c]" />
-                              <span className="font-semibold">{step.time}</span>
-                            </div>
-
-                            {/* Description */}
-                            <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                              {step.description}
-                            </p>
-
-                            {/* Tip */}
-                            {step.tip && (
-                              <div className="flex items-start gap-2 bg-amber-50 rounded-xl px-3 py-2 border border-amber-100">
-                                <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                                <p className="text-amber-700 text-xs leading-relaxed">
-                                  {step.tip}
-                                </p>
+                          <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                            {/* Image Header */}
+                            {placeImage && (
+                              <div className="w-full h-32 relative overflow-hidden">
+                                <img 
+                                  src={placeImage} 
+                                  alt={step.place} 
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                               </div>
                             )}
+                            
+                            <div className="p-4">
+                              {/* Place name */}
+                              <h3 className="font-bold text-orange-700 text-lg mb-2">
+                                {step.place}
+                              </h3>
+
+                              {/* Travel time */}
+                              <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                                <Clock className="w-4 h-4 text-[#ea580c]" />
+                                <span className="font-semibold">{step.time}</span>
+                              </div>
+
+                              {/* Description */}
+                              <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                                {step.description}
+                              </p>
+
+                              {/* Tip */}
+                              {step.tip && (
+                                <div className="flex items-start gap-2 bg-amber-50 rounded-xl px-3 py-2 border border-amber-100">
+                                  <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                                  <p className="text-amber-700 text-xs leading-relaxed">
+                                    {step.tip}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </motion.div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Google Maps Button */}
