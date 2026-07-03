@@ -2,16 +2,18 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, X, Navigation, Clock, Lightbulb, ExternalLink } from 'lucide-react';
 import type { StructuredRoute } from '@/types/route';
-import { SUCRE_PLACES } from '@/lib/places';
+import { SUCRE_PLACES, PLACES_WITH_POS } from '@/lib/places';
 
 interface RouteModalProps {
   isOpen: boolean;
   onClose: () => void;
   routeData: StructuredRoute | null;
   routeInfo?: string | null;
+  visitedPlaces: Set<string>;
+  onToggleVisited: (placeName: string) => void;
 }
 
-export default function RouteModal({ isOpen, onClose, routeData, routeInfo }: RouteModalProps) {
+export default function RouteModal({ isOpen, onClose, routeData, routeInfo, visitedPlaces, onToggleVisited }: RouteModalProps) {
   // Fallback for raw text if JSON parsing failed
   const hasStructuredData = routeData && routeData.steps && routeData.steps.length > 0;
 
@@ -71,7 +73,9 @@ export default function RouteModal({ isOpen, onClose, routeData, routeInfo }: Ro
                     <div className="space-y-4">
                       {routeData.steps.map((step, index) => {
                         const placeImage = SUCRE_PLACES.find(p => p.name.toLowerCase() === step.place.toLowerCase())?.image;
-                        
+                        const place = PLACES_WITH_POS.find(p => p.name.toLowerCase() === step.place.toLowerCase());
+                        const isVisited = place ? visitedPlaces.has(place.id) : false;
+
                         return (
                         <motion.div
                           key={index}
@@ -91,7 +95,9 @@ export default function RouteModal({ isOpen, onClose, routeData, routeInfo }: Ro
                           </div>
 
                           {/* Step card */}
-                          <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                          <div className={`bg-gradient-to-br from-orange-50 to-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow ${
+                            isVisited ? 'border-green-300' : 'border-orange-100'
+                          }`}>
                             {/* Image Header */}
                             {placeImage && (
                               <div className="w-full h-32 relative overflow-hidden">
@@ -123,12 +129,36 @@ export default function RouteModal({ isOpen, onClose, routeData, routeInfo }: Ro
 
                               {/* Tip */}
                               {step.tip && (
-                                <div className="flex items-start gap-2 bg-amber-50 rounded-xl px-3 py-2 border border-amber-100">
+                                <div className="flex items-start gap-2 bg-amber-50 rounded-xl px-3 py-2 border border-amber-100 mb-3">
                                   <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                                   <p className="text-amber-700 text-xs leading-relaxed">
                                     {step.tip}
                                   </p>
                                 </div>
+                              )}
+
+                              {/* Mark as Visited */}
+                              {place && (
+                                <button
+                                  onClick={() => onToggleVisited(step.place)}
+                                  className={`w-full flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-all cursor-pointer border ${
+                                    isVisited
+                                      ? 'bg-green-50 text-green-700 border-green-300 hover:bg-green-100'
+                                      : 'bg-transparent text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-700'
+                                  }`}
+                                >
+                                  {isVisited ? (
+                                    <>
+                                      <span className="text-sm">✔</span>
+                                      Visitado
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="text-sm opacity-50">○</span>
+                                      Marcar como visitado
+                                    </>
+                                  )}
+                                </button>
                               )}
                             </div>
                           </div>

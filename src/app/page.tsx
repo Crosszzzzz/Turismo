@@ -75,7 +75,7 @@ function Navbar({ onSelectPlace, onRoutesClick, onHomeClick }: { onSelectPlace: 
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-6 text-gray-700 font-medium shrink-0">
           <button onClick={onHomeClick} className="hover:text-[#c2410c] transition-colors cursor-pointer">Inicio</button>
-          <button onClick={onRoutesClick} className="hover:text-[#c2410c] transition-colors cursor-pointer">Rutas</button>
+          <button onClick={onRoutesClick} className="hover:text-[#c2410c] transition-colors cursor-pointer">Mis rutas</button>
           <Link href="/acerca-de" className="hover:text-[#c2410c] transition-colors">Acerca de</Link>
         </div>
 
@@ -107,7 +107,7 @@ function Navbar({ onSelectPlace, onRoutesClick, onHomeClick }: { onSelectPlace: 
               onClick={() => { onRoutesClick(); setIsMobileMenuOpen(false); }}
               className="px-4 py-2.5 rounded-xl text-[#c2410c] font-medium hover:bg-[#c2410c]/10 hover:text-[#9a3412] active:text-[#9a3412] transition-colors text-left cursor-pointer"
             >
-              Rutas
+              Mis rutas
             </button>
             <Link
               href="/acerca-de"
@@ -144,6 +144,55 @@ export default function HomePage() {
   const [cachedRouteInfo, setCachedRouteInfo] = useState<string | null>(null);
   const [lastPlacesSnapshot, setLastPlacesSnapshot] = useState<string[]>([]);
 
+  // Route history — persists in localStorage
+  const [routeHistory, setRouteHistory] = useState<Array<{
+    id: string;
+    timestamp: number;
+    routeData: StructuredRoute | null;
+    routeInfo: string | null;
+    placeNames: string[];
+  }>>([]);
+
+  // Load history from localStorage on mount
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem('smarttour-route-history');
+      if (saved) setRouteHistory(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  // Save history to localStorage on change
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('smarttour-route-history', JSON.stringify(routeHistory));
+    } catch {}
+  }, [routeHistory]);
+
+  // Visited places — persists in localStorage
+  const [visitedPlaces, setVisitedPlaces] = useState<Set<string>>(new Set());
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem('smarttour-visited-places');
+      if (saved) setVisitedPlaces(new Set(JSON.parse(saved)));
+    } catch {}
+  }, []);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('smarttour-visited-places', JSON.stringify([...visitedPlaces]));
+    } catch {}
+  }, [visitedPlaces]);
+
+  const toggleVisited = (placeId: string) => {
+    setVisitedPlaces(prev => {
+      const next = new Set(prev);
+      if (next.has(placeId)) next.delete(placeId);
+      else next.add(placeId);
+      return next;
+    });
+  };
+
   const selectedPlace = PLACES_WITH_POS.find(p => p.id === selectedPlaceId);
   const isAdded = selectedPlace ? selectedRoutePlaces.includes(selectedPlace.id) : false;
 
@@ -171,6 +220,17 @@ export default function HomePage() {
       setGeneratedRouteData(cachedRouteData);
       setGeneratedRouteInfo(cachedRouteInfo);
       setIsRouteModalOpen(true);
+      const cachedRouteEntry = {
+        id: `route-${Date.now()}`,
+        timestamp: Date.now(),
+        routeData: cachedRouteData,
+        routeInfo: cachedRouteInfo,
+        placeNames: selectedRoutePlaces.map(id => {
+          const p = PLACES_WITH_POS.find(place => place.id === id);
+          return p ? p.name : id;
+        }),
+      };
+      setRouteHistory(prev => [cachedRouteEntry, ...prev]);
       return;
     }
 
@@ -221,6 +281,18 @@ export default function HomePage() {
         setGeneratedRouteInfo(data.routeInfo);
       }
       setLastPlacesSnapshot([...selectedRoutePlaces]);
+      // Save to route history
+      const newRouteEntry = {
+        id: `route-${Date.now()}`,
+        timestamp: Date.now(),
+        routeData: data.routeData || null,
+        routeInfo: data.routeInfo || null,
+        placeNames: selectedRoutePlaces.map(id => {
+          const p = PLACES_WITH_POS.find(place => place.id === id);
+          return p ? p.name : id;
+        }),
+      };
+      setRouteHistory(prev => [newRouteEntry, ...prev]);
     } catch (error: any) {
       console.error(error);
       const errorMsg = error.message || '';
@@ -369,6 +441,28 @@ export default function HomePage() {
                           </>
                         )}
                       </button>
+
+                      {/* Mark as Visited */}
+                      <button
+                        onClick={() => toggleVisited(selectedPlace.id)}
+                        className={`group relative w-full flex items-center justify-center gap-2 rounded-full py-3 text-sm font-bold transition-all cursor-pointer border mt-2 ${
+                          visitedPlaces.has(selectedPlace.id)
+                            ? 'bg-green-50 text-green-700 border-green-300 hover:bg-green-100'
+                            : 'bg-transparent text-gray-500 border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        {visitedPlaces.has(selectedPlace.id) ? (
+                          <>
+                            <span className="text-base">✔</span>
+                            Visitado
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-base opacity-50">○</span>
+                            Marcar como visitado
+                          </>
+                        )}
+                      </button>
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -445,6 +539,11 @@ export default function HomePage() {
         onClose={() => setIsRouteModalOpen(false)}
         routeData={generatedRouteData}
         routeInfo={generatedRouteInfo}
+        visitedPlaces={visitedPlaces}
+        onToggleVisited={(placeName) => {
+          const place = PLACES_WITH_POS.find(p => p.name.toLowerCase() === placeName.toLowerCase());
+          if (place) toggleVisited(place.id);
+        }}
       />
 
       {/* AI Chat Assistant */}
@@ -457,9 +556,10 @@ export default function HomePage() {
       <RoutesPanel
         isOpen={isRoutesPanelOpen}
         onClose={() => setIsRoutesPanelOpen(false)}
-        routeData={generatedRouteData}
-        routeInfo={generatedRouteInfo}
-        selectedPlaces={selectedRoutePlaces}
+        routeHistory={routeHistory}
+        onDeleteRoute={(id) => setRouteHistory(prev => prev.filter(r => r.id !== id))}
+        visitedPlaces={visitedPlaces}
+        onToggleVisited={toggleVisited}
       />
     </div>
   );
