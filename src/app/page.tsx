@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Navigation, MessageCircle, Search, MapPin, Clock, DollarSign, Plus } from 'lucide-react';
+import { Navigation, MessageCircle, Search, MapPin, Clock, DollarSign, Plus, X, Minus } from 'lucide-react';
 import InteractiveGlobe from '@/components/map/InteractiveGlobe';
 import Link from 'next/link';
 import { PLACES_WITH_POS, Place } from '@/lib/places';
@@ -308,13 +308,16 @@ export default function HomePage() {
                       {/* Main Action Button */}
                       <button
                         onClick={handleToggleRoute}
-                        className={`group relative w-full flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black transition-all cursor-pointer border ${isAdded
-                            ? 'bg-emerald-500 text-white shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:bg-emerald-600 border-white/20'
+                        className={`group relative w-full flex items-center justify-center gap-2 rounded-full py-3.5 text-sm font-bold transition-all cursor-pointer border ${isAdded
+                            ? 'bg-transparent text-[#c2410c] border-[#c2410c]/40 hover:bg-[#c2410c]/5 hover:border-[#c2410c]/60 shadow-none'
                             : 'bg-gradient-to-r from-[#c2410c] to-[#ea580c] hover:from-[#9a3412] hover:to-[#c2410c] text-white shadow-[0_8px_20px_rgba(234,88,12,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(234,88,12,0.4)] border-white/20'
                           }`}
                       >
                         {isAdded ? (
-                          <>✔️ Añadido a tu ruta</>
+                          <>
+                            <Minus className="w-4 h-4" />
+                            Quitar de la ruta
+                          </>
                         ) : (
                           <>
                             <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -330,11 +333,28 @@ export default function HomePage() {
           </AnimatePresence>
 
           {/* Bottom Action Buttons (Centered/Right aligned in large screens) */}
-          <div className="pointer-events-auto absolute bottom-0 right-0 flex w-full md:w-auto flex-col sm:flex-row justify-center md:justify-end gap-4 shrink-0">
+          <div className="pointer-events-auto absolute bottom-0 right-0 flex w-full md:w-auto flex-col sm:flex-row justify-center md:justify-end gap-4 shrink-0 items-end">
+            {/* Clear All Button */}
+            <AnimatePresence>
+              {selectedRoutePlaces.length > 0 && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  onClick={() => setSelectedRoutePlaces([])}
+                  className="flex items-center justify-center rounded-full bg-black/10 hover:bg-red-500/20 text-gray-500 hover:text-red-500 backdrop-blur-sm w-12 h-12 transition-colors cursor-pointer border border-black/5 hover:border-red-400/30"
+                  title="Limpiar ruta"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+
             <button
               onClick={handleGenerateRoute}
               disabled={isGeneratingRoute}
-              className={`group relative flex items-center justify-center gap-2 overflow-visible rounded-3xl px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(194,65,12,0.3),_inset_0_4px_0_rgba(255,255,255,0.2)] transition-all active:translate-y-1 active:shadow-[0_4px_10px_rgba(194,65,12,0.3),_inset_0_0px_0_rgba(255,255,255,0)] ${isGeneratingRoute ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-[#c2410c] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(194,65,12,0.4),_inset_0_4px_0_rgba(255,255,255,0.3)]'
+              className={`group relative flex items-center justify-center gap-2 overflow-visible rounded-full px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(194,65,12,0.3),_inset_0_4px_0_rgba(255,255,255,0.2)] transition-all active:translate-y-1 active:shadow-[0_4px_10px_rgba(194,65,12,0.3),_inset_0_0px_0_rgba(255,255,255,0)] ${isGeneratingRoute ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-[#c2410c] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(194,65,12,0.4),_inset_0_4px_0_rgba(255,255,255,0.3)]'
                 }`}
             >
               {isGeneratingRoute ? (
@@ -365,7 +385,7 @@ export default function HomePage() {
 
             <button
               onClick={() => setIsChatOpen(true)}
-              className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-3xl bg-[#f97316] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(249,115,22,0.3),_inset_0_4px_0_rgba(255,255,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(249,115,22,0.4),_inset_0_4px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(249,115,22,0.3),_inset_0_0px_0_rgba(255,255,255,0)]"
+              className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[#f97316] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(249,115,22,0.3),_inset_0_4px_0_rgba(255,255,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(249,115,22,0.4),_inset_0_4px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(249,115,22,0.3),_inset_0_0px_0_rgba(255,255,255,0)]"
             >
               <MessageCircle className="h-5 w-5" />
               <span className="text-base whitespace-nowrap">Hablar con la guía IA</span>
