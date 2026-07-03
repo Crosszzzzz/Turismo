@@ -100,7 +100,7 @@ export default function ChatInterface({ isOpen, onClose, selectedPlaces = [] }: 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed z-50 bottom-24 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] md:w-96 h-[500px] md:h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col pointer-events-auto border border-gray-100"
+            className="fixed z-50 bottom-6 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] md:w-96 h-[calc(100dvh-8rem)] md:h-[600px] max-h-[70vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col pointer-events-auto border border-gray-100"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] px-5 py-4 flex items-center justify-between shrink-0 cursor-move">

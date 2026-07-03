@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Navigation, MessageCircle, Search, MapPin, Clock, DollarSign, Plus, X, Minus } from 'lucide-react';
+import { Navigation, MessageCircle, Search, MapPin, Clock, DollarSign, Plus, X, Minus, Menu } from 'lucide-react';
 import InteractiveGlobe from '@/components/map/InteractiveGlobe';
 import Link from 'next/link';
 import { PLACES_WITH_POS, Place } from '@/lib/places';
@@ -9,9 +9,10 @@ import type { StructuredRoute } from '@/types/route';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
-function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
+function Navbar({ onSelectPlace, onRoutesClick, onHomeClick }: { onSelectPlace: (id: string) => void; onRoutesClick: () => void; onHomeClick: () => void }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Filter search results
   const searchResults = searchQuery.trim() === ''
@@ -25,15 +26,15 @@ function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
   };
 
   return (
-    <nav className="absolute top-0 w-full z-20 px-6 py-4 pointer-events-none">
-      <div className="mx-auto flex max-w-5xl items-center justify-between rounded-full bg-white/60 px-6 py-3 shadow-[0_4px_30px_rgba(0,0,0,0.05)] backdrop-blur-md border border-white/60 pointer-events-auto">
-        <div className="flex items-center gap-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#c2410c] drop-shadow-sm font-sans">
+    <nav className="absolute top-0 w-full z-30 px-4 sm:px-6 pt-[calc(1rem+var(--safe-area-top))] pointer-events-none">
+      <div className="mx-auto flex max-w-5xl items-center justify-between rounded-full bg-white/60 px-4 sm:px-6 py-3 shadow-[0_4px_30px_rgba(0,0,0,0.05)] backdrop-blur-md border border-white/60 pointer-events-auto">
+        <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#c2410c] drop-shadow-sm font-sans shrink-0">
             SmartTour
           </h1>
 
-          {/* Search Bar */}
-          <div className="relative hidden md:block w-64">
+          {/* Search Bar — visible on all sizes, responsive width */}
+          <div className="relative w-full md:w-64">
             <div className="relative flex items-center">
               <Search className="absolute left-3 h-4 w-4 text-gray-400" />
               <input
@@ -54,7 +55,7 @@ function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full mt-2 w-full rounded-2xl bg-white/90 backdrop-blur-md shadow-lg border border-white p-2 flex flex-col gap-1"
+                  className="absolute top-full mt-2 w-full rounded-2xl bg-white/90 backdrop-blur-md shadow-lg border border-white p-2 flex flex-col gap-1 max-h-60 overflow-y-auto"
                 >
                   {searchResults.map(place => (
                     <button
@@ -71,23 +72,66 @@ function Navbar({ onSelectPlace }: { onSelectPlace: (id: string) => void }) {
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-6 text-gray-700 font-medium">
-          <Link href="#" className="hover:text-[#c2410c] transition-colors">Inicio</Link>
-          <Link href="/rutas" className="hover:text-[#c2410c] transition-colors">Rutas</Link>
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-6 text-gray-700 font-medium shrink-0">
+          <button onClick={onHomeClick} className="hover:text-[#c2410c] transition-colors cursor-pointer">Inicio</button>
+          <button onClick={onRoutesClick} className="hover:text-[#c2410c] transition-colors cursor-pointer">Rutas</button>
           <Link href="/acerca-de" className="hover:text-[#c2410c] transition-colors">Acerca de</Link>
         </div>
+
+        {/* Hamburger — mobile only */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 text-gray-700 hover:text-[#c2410c] transition-colors cursor-pointer shrink-0"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden absolute top-full left-0 right-0 mt-2 mx-4 rounded-2xl bg-white/80 backdrop-blur-md shadow-lg border border-white/60 p-4 flex flex-col gap-2 pointer-events-auto"
+          >
+            <button
+              onClick={() => { onHomeClick(); setIsMobileMenuOpen(false); }}
+              className="px-4 py-2.5 rounded-xl text-[#c2410c] font-medium hover:bg-[#c2410c]/10 hover:text-[#9a3412] active:text-[#9a3412] transition-colors text-left cursor-pointer"
+            >
+              Inicio
+            </button>
+            <button
+              onClick={() => { onRoutesClick(); setIsMobileMenuOpen(false); }}
+              className="px-4 py-2.5 rounded-xl text-[#c2410c] font-medium hover:bg-[#c2410c]/10 hover:text-[#9a3412] active:text-[#9a3412] transition-colors text-left cursor-pointer"
+            >
+              Rutas
+            </button>
+            <Link
+              href="/acerca-de"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="px-4 py-2.5 rounded-xl text-[#c2410c] font-medium hover:bg-[#c2410c]/10 hover:text-[#9a3412] active:text-[#9a3412] transition-colors"
+            >
+              Acerca de
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
 
 import RouteModal from '@/components/map/RouteModal';
+import RoutesPanel from '@/components/map/RoutesPanel';
 import ChatInterface from '@/components/chat/ChatInterface';
 
 export default function HomePage() {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [selectedRoutePlaces, setSelectedRoutePlaces] = useState<string[]>([]); // "Shopping Cart" state
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isRoutesPanelOpen, setIsRoutesPanelOpen] = useState(false);
 
   // Route generation state
   const [isGeneratingRoute, setIsGeneratingRoute] = useState(false);
@@ -194,7 +238,7 @@ export default function HomePage() {
     <div className="relative h-dvh w-full overflow-hidden bg-gradient-to-b from-[#e0f2fe] via-[#f0f9ff] to-[#fafaf9]">
 
       {/* Navbar Minimalista, Flotante y con Buscador Desacoplado */}
-      <Navbar onSelectPlace={setSelectedPlaceId} />
+      <Navbar onSelectPlace={setSelectedPlaceId} onRoutesClick={() => setIsRoutesPanelOpen(true)} onHomeClick={() => { setSelectedPlaceId(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
 
       {/* 3D Interactive Globe Background */}
       <div className="absolute inset-0 z-0">
@@ -205,7 +249,7 @@ export default function HomePage() {
       </div>
 
       {/* Foreground UI Layer */}
-      <div className="pointer-events-none absolute inset-0 z-10 p-6 pb-8">
+      <div className="pointer-events-none absolute inset-0 z-10 p-4 sm:p-6 pb-[calc(1.5rem+var(--safe-area-bottom))] sm:pb-[calc(2rem+var(--safe-area-bottom))]">
 
         {/* Bottom Area Container */}
         <div className="flex flex-col md:flex-row items-end justify-between gap-6 mx-auto w-full h-full max-w-6xl relative">
@@ -224,7 +268,7 @@ export default function HomePage() {
                 dragElastic={0.1}
                 className="pointer-events-auto absolute bottom-0 left-0 w-full md:w-96 cursor-grab active:cursor-grabbing"
               >
-                <div className="bg-white/35 backdrop-blur-xl border border-white/40 rounded-[2rem] p-5 shadow-[0_8px_40px_rgba(0,0,0,0.12)] flex flex-col resize overflow-auto min-h-[400px] min-w-[320px] max-w-[90vw] max-h-[85vh]">
+                <div className="bg-white/35 backdrop-blur-xl border border-white/40 rounded-[2rem] p-5 shadow-[0_8px_40px_rgba(0,0,0,0.12)] flex flex-col overflow-y-auto max-w-[calc(100vw-2rem)] max-h-[70vh] md:max-h-[85vh]">
                   {/* Drag handle hint */}
                   <div className="w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-4"></div>
 
@@ -332,8 +376,8 @@ export default function HomePage() {
             )}
           </AnimatePresence>
 
-          {/* Bottom Action Buttons (Centered/Right aligned in large screens) */}
-          <div className="pointer-events-auto absolute bottom-0 right-0 flex w-full md:w-auto flex-col sm:flex-row justify-center md:justify-end gap-4 shrink-0 items-end">
+          {/* Bottom Action Buttons */}
+          <div className={`pointer-events-auto absolute bottom-0 right-0 flex w-full md:w-auto flex-col sm:flex-row justify-center md:justify-end gap-3 sm:gap-4 shrink-0 items-end pb-[var(--safe-area-bottom)] ${selectedPlace ? 'hidden md:flex' : ''}`}>
             {/* Clear All Button */}
             <AnimatePresence>
               {selectedRoutePlaces.length > 0 && (
@@ -362,7 +406,7 @@ export default function HomePage() {
               ) : (
                 <MapPin className="h-5 w-5" />
               )}
-              <span className="text-base whitespace-nowrap">
+              <span className="text-sm sm:text-base whitespace-nowrap">
                 {isGeneratingRoute ? 'Generando...' : 'Generar ruta'}
               </span>
 
@@ -388,7 +432,7 @@ export default function HomePage() {
               className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[#f97316] px-6 py-4 font-bold text-white shadow-[0_8px_20px_rgba(249,115,22,0.3),_inset_0_4px_0_rgba(255,255,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(249,115,22,0.4),_inset_0_4px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_4px_10px_rgba(249,115,22,0.3),_inset_0_0px_0_rgba(255,255,255,0)]"
             >
               <MessageCircle className="h-5 w-5" />
-              <span className="text-base whitespace-nowrap">Hablar con la guía IA</span>
+              <span className="text-sm sm:text-base whitespace-nowrap">Hablar con la guía IA</span>
             </button>
           </div>
 
@@ -407,6 +451,15 @@ export default function HomePage() {
       <ChatInterface
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
+      />
+
+      {/* Routes Panel (sidebar) */}
+      <RoutesPanel
+        isOpen={isRoutesPanelOpen}
+        onClose={() => setIsRoutesPanelOpen(false)}
+        routeData={generatedRouteData}
+        routeInfo={generatedRouteInfo}
+        selectedPlaces={selectedRoutePlaces}
       />
     </div>
   );

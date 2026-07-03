@@ -21,6 +21,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: '#4f46e5',
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -38,7 +39,7 @@ export default function RootLayout({
           crossOrigin=""
         />
       </head>
-      <body className="min-h-dvh bg-gray-50 text-gray-900 antialiased">
+      <body className="min-h-dvh bg-gray-50 text-gray-900 antialiased overflow-x-hidden">
         {children}
       </body>
     </html>
