@@ -165,6 +165,7 @@ interface SceneProps {
 function Scene({ selectedPlaceId, onSelectPlace }: SceneProps) {
   const { camera } = useThree();
   const controlsRef = useRef<any>(null);
+  const globeRef = useRef<THREE.Mesh>(null);
   
   // Track target position for camera to zoom/pan to
   const targetCameraPos = useRef<THREE.Vector3 | null>(null);
@@ -227,7 +228,7 @@ function Scene({ selectedPlaceId, onSelectPlace }: SceneProps) {
       <Environment preset="city" />
       
       {/* The Globe - Pastel Map Theme */}
-      <Sphere args={[GLOBE_RADIUS, 64, 64]} castShadow receiveShadow>
+      <Sphere ref={globeRef} args={[GLOBE_RADIUS, 64, 64]} castShadow receiveShadow>
         <MeshDistortMaterial 
           color="#dce3d0" // Earthy map green/sand
           roughness={0.9} // Matte

@@ -224,9 +224,9 @@ export default function HomePage() {
                 dragElastic={0.1}
                 className="pointer-events-auto absolute bottom-0 left-0 w-full md:w-96 cursor-grab active:cursor-grabbing"
               >
-                <div className="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2rem] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex flex-col resize overflow-auto min-h-[400px] min-w-[320px] max-w-[90vw] max-h-[85vh]">
+                <div className="bg-white/35 backdrop-blur-xl border border-white/40 rounded-[2rem] p-5 shadow-[0_8px_40px_rgba(0,0,0,0.12)] flex flex-col resize overflow-auto min-h-[400px] min-w-[320px] max-w-[90vw] max-h-[85vh]">
                   {/* Drag handle hint */}
-                  <div className="w-12 h-1.5 bg-gray-300/80 rounded-full mx-auto mb-4 opacity-70"></div>
+                  <div className="w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-4"></div>
 
                   {/* Content that updates when selectedPlace changes */}
                   <AnimatePresence mode="wait">
@@ -239,7 +239,7 @@ export default function HomePage() {
                       className="flex flex-col"
                     >
                       {/* Header Image */}
-                      <div className="w-full h-40 rounded-2xl mb-4 relative overflow-hidden flex items-center justify-center bg-gray-100">
+                      <div className="w-full h-40 rounded-2xl mb-4 relative overflow-hidden flex items-center justify-center bg-white/20 backdrop-blur-sm">
                         {selectedPlace.image ? (
                           <img
                             src={selectedPlace.image}
@@ -261,46 +261,46 @@ export default function HomePage() {
                       {/* Header Title & Category */}
                       <div className="mb-3">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#c2410c] bg-[#ffedd5] px-2 py-0.5 rounded-full">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#c2410c] bg-[#ffedd5]/80 backdrop-blur-sm px-2 py-0.5 rounded-full">
                             {selectedPlace.type}
                           </span>
-                          <span className="text-xs font-bold text-amber-500 flex items-center">
+                          <span className="text-xs font-bold text-amber-600 flex items-center drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]">
                             ⭐ {selectedPlace.rating}
                           </span>
                         </div>
-                        <h2 className="text-2xl font-black text-gray-900 leading-tight tracking-tight pr-2">{selectedPlace.name}</h2>
+                        <h2 className="text-2xl font-black text-gray-900 leading-tight tracking-tight pr-2 drop-shadow-[0_1px_2px_rgba(255,255,255,0.6)]">{selectedPlace.name}</h2>
                       </div>
 
-                      <p className="text-sm text-gray-600 mb-5 cursor-text leading-relaxed">{selectedPlace.info}</p>
+                      <p className="text-sm text-gray-700 mb-5 cursor-text leading-relaxed drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">{selectedPlace.info}</p>
 
                       {/* Fast Data Grid */}
                       <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-2 bg-white/40 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/30 shadow-sm">
                           <Clock className="w-4 h-4 text-[#4d7c0f]" />
                           <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase">Tiempo</span>
-                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.time}</span>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase">Tiempo</span>
+                            <span className="text-xs font-semibold text-gray-800">{selectedPlace.time}</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-2 bg-white/40 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/30 shadow-sm">
                           <DollarSign className="w-4 h-4 text-[#4d7c0f]" />
                           <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase">Costo</span>
-                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.cost}</span>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase">Costo</span>
+                            <span className="text-xs font-semibold text-gray-800">{selectedPlace.cost}</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-2 bg-white/40 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/30 shadow-sm">
                           <MapPin className="w-4 h-4 text-[#4d7c0f]" />
                           <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase">Dificultad</span>
-                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.difficulty}</span>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase">Dificultad</span>
+                            <span className="text-xs font-semibold text-gray-800">{selectedPlace.difficulty}</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-xl border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-2 bg-white/40 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/30 shadow-sm">
                           <MessageCircle className="w-4 h-4 text-[#4d7c0f]" />
                           <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase">Horario</span>
-                            <span className="text-xs font-semibold text-gray-700">{selectedPlace.schedule}</span>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase">Horario</span>
+                            <span className="text-xs font-semibold text-gray-800">{selectedPlace.schedule}</span>
                           </div>
                         </div>
                       </div>

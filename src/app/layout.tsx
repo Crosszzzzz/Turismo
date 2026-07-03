@@ -2,13 +2,16 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sucre Turismo — Tu guía inteligente',
+  title: 'SmartTour — Tu guía inteligente',
   description: 'Explorá Sucre con rutas personalizadas generadas por IA. Turismo gratuito y accesible.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon.svg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Sucre Turismo',
+    title: 'SmartTour',
   },
 };
 

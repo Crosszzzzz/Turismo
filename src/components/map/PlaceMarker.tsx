@@ -15,9 +15,17 @@ interface PlaceMarkerProps {
 
 export function PlaceMarker({ place, isSelected = false, onHover, onClick }: PlaceMarkerProps) {
   const [hovered, setHovered] = useState(false);
+  const [labelHovered, setLabelHovered] = useState(false);
   const groupRef = useRef<THREE.Group>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const position = place.position!;
   
+  // Category icon mapping
+  const categoryIcon: Record<string, string> = {
+    church: '⛪', museum: '🏛️', park: '🌳', castle: '🏰',
+    market: '🏪', historic: '🏛️', dino: '🦕',
+  };
+
   // Earthy/Tourism color palette for markers
   const baseColor = place.type === 'park' ? '#4d7c0f' : // Sage green
                     place.type === 'museum' ? '#c2410c' : // Terracotta
@@ -46,11 +54,32 @@ export function PlaceMarker({ place, isSelected = false, onHover, onClick }: Pla
       const targetScale = isSelected ? baseScale * 1.4 : (hovered ? baseScale * 1.2 : baseScale);
       groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
     }
+
+    // --- Occlusion: direct DOM manipulation, zero React re-renders ---
+    const el = containerRef.current;
+    if (el) {
+      const worldPos = new THREE.Vector3();
+      groupRef.current!.getWorldPosition(worldPos);
+
+      const cameraPos = state.camera.position;
+      const markerNormal = worldPos.clone().normalize();
+      const viewDir = cameraPos.clone().sub(worldPos).normalize();
+      const dot = markerNormal.dot(viewDir);
+
+      // Fade zone: fully visible > 0.3, fully hidden < 0.1
+      const target = dot > 0.3 ? 1 : dot < 0.1 ? 0 : (dot - 0.1) / 0.2;
+      const current = parseFloat(el.style.opacity || '1');
+      const next = current + (target - current) * Math.min(delta * 20, 1);
+
+      el.style.opacity = String(next);
+      el.style.pointerEvents = next < 0.05 ? 'none' : 'auto';
+    }
   });
 
   const handlePointerOver = (e: any) => {
     e.stopPropagation();
     setHovered(true);
+    setLabelHovered(true);
     onHover(true);
     document.body.style.cursor = 'pointer';
   };
@@ -58,6 +87,7 @@ export function PlaceMarker({ place, isSelected = false, onHover, onClick }: Pla
   const handlePointerOut = (e: any) => {
     e.stopPropagation();
     setHovered(false);
+    setLabelHovered(false);
     onHover(false);
     document.body.style.cursor = 'auto';
   };
@@ -262,25 +292,44 @@ export function PlaceMarker({ place, isSelected = false, onHover, onClick }: Pla
         {renderGeometry()}
       </group>
 
-      {/* Enriched Hover Tooltip */}
-      {hovered && !isSelected && (
-        <Html zIndexRange={[100, 0]} className="pointer-events-none">
-          <div className="transform -translate-x-1/2 -translate-y-[calc(100%+25px)]">
-            <div className="bg-black/85 backdrop-blur-md px-3 py-2 rounded-xl text-center shadow-lg border border-white/10 flex flex-col items-center gap-1 min-w-[120px]">
-              <div className="flex items-center gap-1.5 w-full justify-center">
-                <span className="text-lg">{place.emoji}</span>
-                <span className="text-white font-bold text-sm tracking-tight">{place.name}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-medium w-full justify-center">
-                <span className="text-amber-400 bg-amber-400/10 px-1.5 rounded">⭐ {place.rating}</span>
-                <span className="text-green-400 bg-green-400/10 px-1.5 rounded">{place.cost === 'Gratis' ? 'Gratis' : '$$'}</span>
+      {/* Glassmorphism Label — manual occlusion via DOM + hover expand */}
+      <Html zIndexRange={[100, 0]} className="pointer-events-none">
+        <div
+          ref={containerRef}
+          className="transform -translate-x-1/2 -translate-y-[calc(100%+25px)]"
+          style={{ opacity: 1, transition: 'opacity 0.1s ease-out' }}
+        >
+          <div
+            className={`bg-white/15 backdrop-blur-md border border-white/25 shadow-[0_2px_12px_rgba(0,0,0,0.08)] overflow-hidden ${labelHovered ? 'rounded-xl px-3.5 py-2.5' : 'rounded-lg px-3 py-1.5'}`}
+            style={{ transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
+          >
+            <span className="text-gray-800 font-semibold text-xs tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)] whitespace-nowrap block text-center">
+              {place.name}
+            </span>
+            {/* Expanded: category icon + rating */}
+            <div
+              className="text-center"
+              style={{
+                maxHeight: labelHovered ? '36px' : '0px',
+                opacity: labelHovered ? 1 : 0,
+                marginTop: labelHovered ? '6px' : '0px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="flex items-center justify-center gap-2 text-[10px] font-medium text-gray-600">
+                <span className="flex items-center gap-1">
+                  <span>{categoryIcon[place.type] || '📍'}</span>
+                  <span className="capitalize">{place.type}</span>
+                </span>
+                <span className="w-px h-2.5 bg-gray-400/40"></span>
+                <span className="text-amber-600">⭐ {place.rating}</span>
               </div>
             </div>
-            {/* Triangle */}
-            <div className="w-0 h-0 mx-auto border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black/85"></div>
           </div>
-        </Html>
-      )}
+          <div className="w-0 h-0 mx-auto border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[6px] border-t-white/15"></div>
+        </div>
+      </Html>
     </group>
   );
 }
